@@ -1,0 +1,40 @@
+& when (@do-dont-enabled) {
+
+  .do-dont-container {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    padding: 20px;
+
+    .do-dont-title {
+      font-size: 1.2rem;
+      font-weight: 400;
+
+      &.red {
+        color: @do-dont-red;
+      }
+
+      &.green {
+        color: @do-dont-green;
+      }
+    }
+
+    .do-dont-desc {
+      margin-bottom: 15px;
+      margin-top: 10px;
+    }
+
+    .do-dont-divider {
+      height: 5px;
+      margin-bottom: 10px;
+      width: 100%;
+
+      &.red {
+        background: @do-dont-red;
+      }
+
+      &.green {
+        background: @do-dont-green;
+      }
+    }
+  }
+}
