@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import DoDont from "../../../../components/do-dont/DoDont";
+import DoDontPanel from "../../../../components/do-dont/DoDontPanel";
 
 class OverviewTab extends Component {
   render() {
     return (
       <div className="container">
-        <DoDont isDo={false} description="Hello">
-          <button className="button button-primary" type="button">
-            Primary Button
-          </button>
-        </DoDont>
         <p className="lead">
           Buttons are used primarily on action items. Some examples include Add, Save, Delete, Deploy.
         </p>
@@ -85,6 +81,23 @@ class OverviewTab extends Component {
           </tbody>
         </table>
         <h2>Best Practices</h2>
+        <DoDontPanel numOfCols={2}>
+          <DoDont isDo={false} description="Hello">
+            <button className="button button-primary" type="button">
+              Primary Button
+            </button>
+          </DoDont>
+          <DoDont isDo={true} description="Yes">
+            <button className="button button-primary" type="button">
+              Primary Button
+            </button>
+          </DoDont>
+          <DoDont isDo={false} description="Nope">
+            <button className="button button-primary" type="button">
+              Primary Button
+            </button>
+          </DoDont>
+        </DoDontPanel>
       </div>
     );
   }
