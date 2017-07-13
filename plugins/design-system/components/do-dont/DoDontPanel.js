@@ -15,14 +15,17 @@ class DoDontPanel extends Component {
   }
 
   render() {
-    const { className } = this.props;
+    const { className, singleRows } = this.props;
     const classes = classNames("do-dont-panel", className);
+    const tableClasses = classNames("do-dont-table", {
+      "collapse-cols": singleRows
+    });
 
     const childrenGroups = this.getGroupedChildren();
 
     return (
       <div className={classes}>
-        <table className="do-dont-table">
+        <table className={tableClasses}>
           {childrenGroups.map(function(grouping) {
             return (
               <tr>
@@ -41,6 +44,7 @@ class DoDontPanel extends Component {
 DoDontPanel.propTypes = {
   numOfCols: React.PropTypes.number.isRequired,
   children: React.PropTypes.node.isRequired,
+  singleRows: React.PropTypes.bool,
   className: React.PropTypes.oneOfType([
     React.PropTypes.array,
     React.PropTypes.object,

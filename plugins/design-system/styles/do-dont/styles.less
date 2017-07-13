@@ -1,8 +1,8 @@
 & when (@do-dont-enabled) {
 
   .do-dont-container {
-    background: #fff;
-    border: 1px solid #e5e5e5;
+    background: @do-dont-background-color;
+    border: 1px solid @do-dont-border-color;
     padding: 20px;
 
     .do-dont-title {
@@ -42,6 +42,31 @@
     border-collapse: separate;
     border-spacing: 15px;
     width: 100%;
+
+    &.collapse-cols {
+      border-spacing: 0 15px;
+
+      tr {
+
+        .do-dont-container {
+          border-left: none;
+          border-right: none;
+        }
+
+        td:first-child {
+
+          .do-dont-container {
+            border-left: 1px solid @do-dont-border-color;
+          }
+        }
+
+        td:last-child {
+
+          .do-dont-container {
+            border-right: 1px solid @do-dont-border-color;
+          }
+        }
+      }
+    }
   }
 }
-

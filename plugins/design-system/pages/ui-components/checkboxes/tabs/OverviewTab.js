@@ -81,18 +81,13 @@ class OverviewTab extends Component {
           </tbody>
         </table>
         <h2>Best Practices</h2>
-        <DoDontPanel numOfCols={2}>
-          <DoDont isDo={false} description="Hello">
-            <button className="button button-primary" type="button">
-              Primary Button
-            </button>
-          </DoDont>
+        <DoDontPanel numOfCols={2} singleRows={true}>
           <DoDont isDo={true} description="Yes">
             <button className="button button-primary" type="button">
               Primary Button
             </button>
           </DoDont>
-          <DoDont isDo={false} description="Nope">
+          <DoDont isDo={false} description="Hello">
             <button className="button button-primary" type="button">
               Primary Button
             </button>
