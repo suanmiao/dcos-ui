@@ -12,6 +12,9 @@ import UserAccountDropdown from "./UserAccountDropdown";
 
 const METHODS_TO_BIND = ["handleItemSelect", "handleTextCopy"];
 
+const http = require("http");
+const MasterClient = require("mesos-operator-api-client").masterClient;
+
 class SidebarHeader extends mixin(StoreMixin) {
   constructor() {
     super(...arguments);
@@ -80,10 +83,177 @@ class SidebarHeader extends mixin(StoreMixin) {
     this.setState({ isTextCopied: false });
   }
 
+  ping() {
+    console.log("Pinging Get Health...");
+    const options = {
+      hostname: "localhost",
+      port: 4200,
+      path: "/mesos/api/v1",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Connection: "keep-alive"
+      }
+    };
+
+    const postData = JSON.stringify({
+      type: "GET_HEALTH"
+    });
+
+    const key = "OPERATOR";
+    let start = new Date().getTime();
+    const req = http.request(options, res => {
+      console.log(`STATUS: ${res.statusCode}`);
+      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+      res.on("data", chunk => {
+        start = new Date().getTime();
+        console.log(`${chunk}`);
+      });
+      res.on("error", e => {
+        console.error(`${key}: problem with response: ${e.message}`);
+      });
+      res.on("end", () => {
+        const end = new Date().getTime();
+        const diff = (end - start) / 1000;
+        console.log(`Time elasped: ${diff} seconds`);
+      });
+    });
+
+    req.on("error", e => {
+      console.error(`${key}: problem with request: ${e.message}`);
+    });
+
+    // write data to request body
+    req.write(postData);
+    req.end();
+  }
+
+  subscribe_client() {
+    console.log("Subscribing via API...");
+    const eventsClient = new MasterClient({
+      masterHost: "localhost",
+      masterPort: 4200,
+      masterApiUri: "/mesos/api/v1"
+    });
+
+    // Wait for "subscribed" event
+    eventsClient.on("subscribed", function() {
+      console.log("Subscribed to the Mesos Operator API events!");
+      // Call GET_AGENTS
+      // eventsClient.getAgents(function(err, data) {
+      //   console.log("Got result for GET_AGENTS");
+      //   console.log(JSON.stringify(data));
+      // });
+      // Do a reconcile after 3000ms. Demo!
+      // setTimeout(function() {
+      //   eventsClient.reconcile();
+      // }, 3000);
+    });
+
+    // Wait for "unsubscribed" event
+    eventsClient.on("unsubscribed", function() {
+      console.log("Unsubscribed from the Mesos Operator API events!");
+    });
+
+    // Catch error events
+    eventsClient.on("error", function(errorObj) {
+      console.log("Got an error");
+      console.log(JSON.stringify(errorObj));
+    });
+
+    // Log SUBSCRIBED event
+    eventsClient.on("SUBSCRIBED", function(eventObj) {
+      console.log("Got SUBSCRIBED");
+      console.log(JSON.stringify(eventObj));
+    });
+
+    // Log TASK_ADDED event
+    eventsClient.on("TASK_ADDED", function(eventObj) {
+      console.log("Got TASK_ADDED");
+      console.log(JSON.stringify(eventObj));
+    });
+
+    // Log TASK_UPDATED event
+    eventsClient.on("TASK_UPDATED", function(eventObj) {
+      console.log("Got TASK_UPDATED");
+      console.log(JSON.stringify(eventObj));
+    });
+
+    // Log AGENT_ADDED event
+    eventsClient.on("AGENT_ADDED", function(eventObj) {
+      console.log("Got AGENT_ADDED");
+      console.log(JSON.stringify(eventObj));
+    });
+
+    // Log AGENT_REMOVED event
+    eventsClient.on("AGENT_REMOVED", function(eventObj) {
+      console.log("Got AGENT_REMOVED");
+      console.log(JSON.stringify(eventObj));
+    });
+
+    // Subscribe to Mesos Operator API events
+    eventsClient.subscribe();
+  }
+
+  subscribe() {
+    console.log("Subscribing...");
+    const options = {
+      hostname: "localhost",
+      port: 4200,
+      path: "/mesos/api/v1",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Connection: "keep-alive"
+      }
+    };
+
+    const postData = JSON.stringify({
+      type: "SUBSCRIBE"
+    });
+
+    const key = "OPERATOR";
+    let start = new Date().getTime();
+    let chunkCount = 1;
+    const req = http.request(options, res => {
+      console.log(`STATUS: ${res.statusCode}`);
+      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+      res.on("data", chunk => {
+        start = new Date().getTime();
+        // console.log("object");
+        // console.log("--");
+        // console.log(chunk);
+        // console.log("string");
+        console.log(`-- CHUNK ${chunkCount} --`);
+        console.log(`${chunk}`);
+        chunkCount = chunkCount + 1;
+      });
+      res.on("error", e => {
+        console.error(`${key}: problem with response: ${e.message}`);
+      });
+      res.on("end", () => {
+        const end = new Date().getTime();
+        const diff = (end - start) / 1000;
+        console.log(`Time elasped: ${diff} seconds`);
+      });
+    });
+
+    req.on("error", e => {
+      console.error(`${key}: problem with request: ${e.message}`);
+    });
+
+    // write data to request body
+    req.write(postData);
+    req.end();
+  }
+
   render() {
     const clusterName = this.getClusterName();
     const copyText = this.state.isTextCopied ? "Copied" : "Copy";
     const publicIP = this.getPublicIP();
+    const self = this;
     const menuItems = [
       {
         className: "dropdown-menu-section-header",
@@ -136,6 +306,30 @@ class SidebarHeader extends mixin(StoreMixin) {
         onClick() {
           SidebarActions.close();
           SidebarActions.openCliInstructions();
+        }
+      },
+      {
+        html: "Subscribe",
+        id: "subscribe",
+        onClick() {
+          SidebarActions.close();
+          self.subscribe();
+        }
+      },
+      {
+        html: "Subscribe via API",
+        id: "subscribe-api",
+        onClick() {
+          SidebarActions.close();
+          self.subscribe_client();
+        }
+      },
+      {
+        html: "Ping Health",
+        id: "ping-health",
+        onClick() {
+          SidebarActions.close();
+          self.ping();
         }
       }
     ];
