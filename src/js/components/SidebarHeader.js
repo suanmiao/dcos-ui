@@ -4,6 +4,8 @@ import React from "react";
 import { routerShape } from "react-router";
 import { StoreMixin } from "mesosphere-shared-reactjs";
 
+import ConvertString from "convert-string";
+
 import ClipboardTrigger from "./ClipboardTrigger";
 import MetadataStore from "../stores/MetadataStore";
 import MesosSummaryStore from "../stores/MesosSummaryStore";
@@ -196,7 +198,7 @@ class SidebarHeader extends mixin(StoreMixin) {
     eventsClient.subscribe();
   }
 
-  subscribe() {
+  subscribe(responseType) {
     console.log("Subscribing...");
     const options = {
       hostname: "localhost",
@@ -205,7 +207,7 @@ class SidebarHeader extends mixin(StoreMixin) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: `application/${responseType}`,
         Connection: "keep-alive"
       }
     };
@@ -217,17 +219,24 @@ class SidebarHeader extends mixin(StoreMixin) {
     const key = "OPERATOR";
     let start = new Date().getTime();
     let chunkCount = 1;
+    let bytesRead = 0;
     const req = http.request(options, res => {
       console.log(`STATUS: ${res.statusCode}`);
       console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
       res.on("data", chunk => {
         start = new Date().getTime();
         // console.log("object");
-        // console.log("--");
-        // console.log(chunk);
-        // console.log("string");
+        console.log("--");
+        console.log(chunk);
+        console.log("string");
         console.log(`-- CHUNK ${chunkCount} --`);
-        console.log(`${chunk}`);
+        console.log(`Size: ${chunk.length} bytes`);
+        bytesRead = bytesRead + chunk.length;
+        console.log(`Read so far: ${bytesRead} bytes`);
+        const jsonResponse = `${chunk}`;
+        console.log(`${jsonResponse}`);
+        console.log("Converted back:");
+        console.log(ConvertString.stringToBytes(jsonResponse));
         chunkCount = chunkCount + 1;
       });
       res.on("error", e => {
@@ -309,11 +318,19 @@ class SidebarHeader extends mixin(StoreMixin) {
         }
       },
       {
-        html: "Subscribe",
-        id: "subscribe",
+        html: "Subscribe JSON",
+        id: "subscribe-json",
         onClick() {
           SidebarActions.close();
-          self.subscribe();
+          self.subscribe("json");
+        }
+      },
+      {
+        html: "Subscribe Protobuf",
+        id: "subscribe-protobuf",
+        onClick() {
+          SidebarActions.close();
+          self.subscribe("x-protobuf");
         }
       },
       {
