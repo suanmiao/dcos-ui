@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import DoDont from "../../../../components/do-dont/DoDont";
+import Do from "../../../../components/do-dont/Do";
+import Dont from "../../../../components/do-dont/Dont";
 import DoDontPanel from "../../../../components/do-dont/DoDontPanel";
 
 class OverviewTab extends Component {
@@ -81,17 +82,17 @@ class OverviewTab extends Component {
           </tbody>
         </table>
         <h2>Best Practices</h2>
-        <DoDontPanel numOfCols={2} singleRows={true}>
-          <DoDont isDo={true} description="Yes">
+        <DoDontPanel>
+          <Do description="Yes">
             <button className="button button-primary" type="button">
               Primary Button
             </button>
-          </DoDont>
-          <DoDont isDo={false} description="Hello">
+          </Do>
+          <Dont description="Hello">
             <button className="button button-primary" type="button">
               Primary Button
             </button>
-          </DoDont>
+          </Dont>
         </DoDontPanel>
       </div>
     );

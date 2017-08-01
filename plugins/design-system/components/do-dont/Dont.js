@@ -1,31 +1,19 @@
 import classNames from "classnames/dedupe";
 import React, { Component } from "react";
 
-class DoDont extends Component {
+class Dont extends Component {
   getTitle() {
-    const { isDo } = this.props;
-    if (isDo) {
-      return "Do";
-    }
-
-    return "Don't";
+    return "Dont";
   }
 
   render() {
-    const { className, description, isDo } = this.props;
+    const { className, description } = this.props;
     const classes = classNames("do-dont-container", className);
-    const colorClasses = {
-      red: !isDo,
-      green: isDo
-    };
-
-    const dividerClasses = classNames("do-dont-divider", colorClasses);
-    const titleClasses = classNames("do-dont-title", colorClasses);
 
     return (
       <div className={classes}>
-        <div className={dividerClasses} />
-        <div className={titleClasses}>
+        <div className="do-dont-divider red" />
+        <div className="do-dont-title red">
           {this.getTitle()}
         </div>
         <div className="do-dont-desc">
@@ -37,8 +25,7 @@ class DoDont extends Component {
   }
 }
 
-DoDont.propTypes = {
-  isDo: React.PropTypes.bool.isRequired,
+Dont.propTypes = {
   description: React.PropTypes.string.isRequired,
   className: React.PropTypes.oneOfType([
     React.PropTypes.array,
@@ -47,4 +34,4 @@ DoDont.propTypes = {
   ])
 };
 
-module.exports = DoDont;
+module.exports = Dont;
