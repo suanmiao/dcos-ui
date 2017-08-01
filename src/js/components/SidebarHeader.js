@@ -4,8 +4,6 @@ import React from "react";
 import { routerShape } from "react-router";
 import { StoreMixin } from "mesosphere-shared-reactjs";
 
-import ConvertString from "convert-string";
-
 import ClipboardTrigger from "./ClipboardTrigger";
 import MetadataStore from "../stores/MetadataStore";
 import MesosSummaryStore from "../stores/MesosSummaryStore";
@@ -103,27 +101,27 @@ class SidebarHeader extends mixin(StoreMixin) {
       type: "GET_HEALTH"
     });
 
-    const key = "OPERATOR";
+    const key = "RESPONSE";
     let start = new Date().getTime();
     const req = http.request(options, res => {
-      console.log(`STATUS: ${res.statusCode}`);
-      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+      console.log(`[${key}]: STATUS: ${res.statusCode}`);
+      console.log(`[${key}]: HEADERS: ${JSON.stringify(res.headers)}`);
       res.on("data", chunk => {
         start = new Date().getTime();
-        console.log(`${chunk}`);
+        console.log(`[${key}]: ${chunk}`);
       });
       res.on("error", e => {
-        console.error(`${key}: problem with response: ${e.message}`);
+        console.error(`[${key}]: problem with response: ${e.message}`);
       });
       res.on("end", () => {
         const end = new Date().getTime();
         const diff = (end - start) / 1000;
-        console.log(`Time elasped: ${diff} seconds`);
+        console.log(`[${key}]: Time elasped: ${diff} seconds`);
       });
     });
 
     req.on("error", e => {
-      console.error(`${key}: problem with request: ${e.message}`);
+      console.error(`[${key}]: problem with request: ${e.message}`);
     });
 
     // write data to request body
@@ -216,41 +214,43 @@ class SidebarHeader extends mixin(StoreMixin) {
       type: "SUBSCRIBE"
     });
 
-    const key = "OPERATOR";
+    const key = "RESPONSE";
     let start = new Date().getTime();
     let chunkCount = 1;
     let bytesRead = 0;
     const req = http.request(options, res => {
-      console.log(`STATUS: ${res.statusCode}`);
-      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+      console.log(`[${key}]: STATUS: ${res.statusCode}`);
+      console.log(`[${key}]: HEADERS: ${JSON.stringify(res.headers)}`);
       res.on("data", chunk => {
         start = new Date().getTime();
         // console.log("object");
-        console.log("--");
-        console.log(chunk);
-        console.log("string");
+        // console.log("--");
+        // console.log(chunk);
+        // console.log("string");
         console.log(`-- CHUNK ${chunkCount} --`);
-        console.log(`Size: ${chunk.length} bytes`);
+        console.log(`[${key}]: Size: ${chunk.length} bytes`);
         bytesRead = bytesRead + chunk.length;
-        console.log(`Read so far: ${bytesRead} bytes`);
+        console.log(`[${key}]: Read so far: ${bytesRead} bytes`);
         const jsonResponse = `${chunk}`;
-        console.log(`${jsonResponse}`);
-        console.log("Converted back:");
-        console.log(ConvertString.stringToBytes(jsonResponse));
+        console.log(`[${key}]: ${jsonResponse}`);
+        // console.log("Converted back:");
+        // console.log(ConvertString.stringToBytes(jsonResponse));
         chunkCount = chunkCount + 1;
       });
       res.on("error", e => {
-        console.error(`${key}: problem with response: ${e.message}`);
+        console.error(`[${key}]: ${key}: problem with response: ${e.message}`);
       });
       res.on("end", () => {
         const end = new Date().getTime();
         const diff = (end - start) / 1000;
-        console.log(`Time elasped: ${diff} seconds`);
+        console.log(
+          `[${key}]: Connection closed because idle for ${diff} seconds`
+        );
       });
     });
 
     req.on("error", e => {
-      console.error(`${key}: problem with request: ${e.message}`);
+      console.error(`[${key}]: problem with request: ${e.message}`);
     });
 
     // write data to request body
