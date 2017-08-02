@@ -21,6 +21,7 @@
     .do-dont-desc {
       margin-bottom: 15px;
       margin-top: 10px;
+      overflow-wrap: break-word;
     }
 
     .do-dont-divider {
@@ -39,8 +40,23 @@
   }
 
   .do-dont-table {
-    border-collapse: separate;
-    border-spacing: 15px;
     width: 100%;
+
+    tr {
+
+      td {
+
+        &:first-child {
+
+          .do-dont-container {
+            margin-right: 10px;
+          }
+        }
+
+        .do-dont-container {
+          margin-bottom: 10px;
+        }
+      }
+    }
   }
 }
