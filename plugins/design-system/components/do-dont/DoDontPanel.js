@@ -24,17 +24,17 @@ class DoDontPanel extends Component {
 
     return (
       <div className={classes}>
-        <table className="do-dont-table">
+        <div className="do-dont-table">
           {childrenGroups.map(function(grouping) {
             return (
-              <tr>
+              <div className="do-dont-row">
                 {grouping.map(function(child) {
-                  return <td>{child}</td>;
+                  return <div className="do-dont-cell">{child}</div>;
                 })}
-              </tr>
+              </div>
             );
           })}
-        </table>
+        </div>
       </div>
     );
   }
